@@ -206,7 +206,6 @@ if __name__ == "__main__":
                 print("Masukkan judul lagu yang ingin dilihat detailnya")
                 judul = input("> ").strip()
                 print("")
-                
 
                 index_lagu = dapatkan_index_lagu(judul)
 
