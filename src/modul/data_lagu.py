@@ -5,32 +5,33 @@ import modul.format_data as format_data
 
 list_lagu = []
 
+# Muat data list lagu dari file
 def inisiasi():
     file_data.inisiasi()
     rawdata = file_data.muat()
-    
     global list_lagu
     list_lagu = format_data.rawdata_ke_list_lagu(rawdata)
 
+# Saat keluar, simpan data ke file
 def keluar():
     rawdata = format_data.list_lagu_ke_rawdata(list_lagu)
     file_data.simpan(rawdata)
 
+# Cek apakah lagu kosong
 def apakah_lagu_kosong():
     return len(list_lagu) == 0
 
+# Dapatkan lagu berdasarkan judul
 def dapatkan_lagu(judul):
     for lagu in list_lagu:
-
         if lagu["judul"] == judul:
             return lagu
-    
     return None
 
+# Fungsi tambah lagu
 def tambah_lagu(judul, penyanyi, album, genre, tahun, durasi):
     if dapatkan_lagu(judul) is not None:
         return False
-    
     list_lagu.append({
         "judul": judul,
         "penyanyi": penyanyi,
@@ -41,9 +42,9 @@ def tambah_lagu(judul, penyanyi, album, genre, tahun, durasi):
         "ditambahkan": datetime.now().strftime("%d/%m/%y %H:%M:%S"),
         "diedit": datetime.now().strftime("%d/%m/%y %H:%M:%S")
     })
-
     return True
 
+# Fungsi edit lagu
 def edit_lagu(lagu, judul, penyanyi, album, genre, tahun, durasi):
     data_edit = []
 
@@ -61,30 +62,28 @@ def edit_lagu(lagu, judul, penyanyi, album, genre, tahun, durasi):
     if len(data_edit) != 0:
         lagu["diedit"] = datetime.now().strftime("%d/%m/%y %H:%M:%S")
         return data_edit
-    
     return None
-    
+
+# Fungsi hapus lagu
 def hapus_lagu(judul):
     lagu = dapatkan_lagu(judul)
-
     if lagu is None:
         return False
-    
     list_lagu.remove(lagu)
     return True
 
+# Fungsi print semua lagu
 def print_semua_lagu(urut_berdasarkan):
     lagu_terurut = []
     lagu_terurut.extend(list_lagu)
     lagu_terurut.sort(key = lambda lagu: lagu[urut_berdasarkan])
-
     for index, lagu in enumerate(lagu_terurut):
         print(f"{index + 1}. {lagu["judul"]}, {lagu["penyanyi"]} ({lagu["durasi"]})")
 
+#  Fungsi detail lagu
 def print_detail_lagu(lagu):
     for properti, nilai in lagu.items():
         if properti == "ditambahkan" or properti == "diedit":
             print(f"{properti.capitalize()} pada: {nilai}")
-        
         else:
             print(f"{properti.capitalize()}: {nilai}")
