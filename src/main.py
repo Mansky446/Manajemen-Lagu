@@ -1,174 +1,266 @@
-from re import search
 from os import system
+from modul.penyimpanan import Penyimpanan
+from modul.manajemen_lagu import ManajemenLagu
+from modul.pemutar_lagu import PemutarLagu
+from modul.lagu import Lagu
 
-import modul.data_lagu as data_lagu
+from modul.utilitas import dapatkan_opsi, dapatkan_input_dan_cek, apakah_file_ada, format_lokasi_file
 
-# Mendapatkan dan cek input dari user
-def dapatkan_input_dan_cek(pesan, pesan_salah, regex):
-    while True:
-        print(pesan)
-        string_input = input("> ").strip()
-        # Jika input sesuai, keluar dari infinite loop
-        if search(regex, string_input) is not None:
-            return string_input
-        print(pesan_salah)
-
-# Untuk menampilkan menu awal
-def tampilkan_menu_awal():
-    print("Selamat Datang di Manajemen Lagu")
-    print("---------------------------------")
-    print("1. Tambah lagu")
-    print("2. Hapus lagu")
-    print("3. Edit lagu")
-    print("4. Lihat lagu")
-    print("5. Lihat detail lagu")
-    print("6. Masuk mode setel lagu")
-    print("7. Keluar\n")
-    # Mendapatkan input dari user
-    opsi = input("Pilih opsi (1-6): ")
-    print("")
-
-    try:
-        opsi = int(opsi)
-    except:
-        # Bila input bukan angka, error
-        print("Input opsi tidak sesuai!\n")
-    else:
-        if opsi < 1 or opsi > 6:
-            # Bila input tidak diantara 1-6
-            print("Masukkan opsi 1-6!\n")
-    return opsi
-
-# Untuk menampilkan menu setel lagu
-def tampilkan_menu_setel_lagu():
-    print("Mode Setel Lagu")
-    print("---------------")
-    print("1. Putar lagu")
-    print("2. Jeda lagu")
-    print("3. Mulai kembali lagu")
-    print("4. Info lagu yang sedang diputar")
-    print("5. Lompat ke detik")
-    print("6. Keluar\n")
-    # Mendapatkan input dari user
-    opsi = input("Pilih opsi (1-6): ")
-    print("")
-
-    try:
-        opsi = int(opsi)
-    except:
-        # Bila input bukan angka, error
-        print("Input opsi tidak sesuai!\n")
-    else:
-        if opsi < 1 or opsi > 6:
-            # Bila input tidak diantara 1-6
-            print("Masukkan opsi 1-6!\n")
-    return opsi
-
-def mode_setel_lagu():
-    tampilkan_menu_setel_lagu()
-
-# Mode menu awal
-def mode_menu_awal():
-    while True:
-        system("cls")
-        opsi = tampilkan_menu_awal()
-        # Jika opsi = 1, menembahkan lagu
+class ManajemenTampilan:
+    def __init__(self):
+        self.tampilan_aktif = "Menu Awal"
+    
+    # Fungsi tampilan menu awal
+    def menu_awal(self):
+        print("Menu Awal")
+        print("---------")
+        print("1. Manajemen lagu")
+        print("2. Pemutar lagu")
+        print("3. Keluar program\n")
+        opsi = dapatkan_opsi(1, 3, "Pilih menu", "Input tidak valid", "Masukkan input yang sesuai!")
+        # Opsi berpindah ke menu manajemen lagu
         if opsi == 1:
-            judul = dapatkan_input_dan_cek("Masukkan judul lagu", "Input judul tidak sesuai, harap diulang!", r"^\w[\w\s']*$")
-            album = dapatkan_input_dan_cek("Masukkan Album lagu", "Input album tidak sesuai, harap diulang!", r"^\w[\w\s']*$")
-            penyanyi = dapatkan_input_dan_cek("Masukkan penyayi lagu", "Input penyanyi tidak sesuai, harap diulang!", r"^\w[\w\s']*$")
-            genre = dapatkan_input_dan_cek("Masukkan genre lagu", "Input genre tidak sesuai, harap diulang!", r"^\w[\w\s]*$")
-            tahun = dapatkan_input_dan_cek("Masukkan tahun lagu [tttt]", "Input tahun tidak sesuai, harap diulang!", r"^[0-9]{4}$")
-            durasi = dapatkan_input_dan_cek("Masukkan durasi lagu [mm:dd]", "Input durasi tidak sesuai, harap diulang!", r"^[0-9]{2}:[0-9]{2}$")
-            print("")
-
-            if data_lagu.tambah_lagu(judul, penyanyi, album, genre, tahun, durasi):
-                print(f"Lagu {judul} berhasil ditambahkan\n")
-            else:
-                print(f"Lagu {judul} sudah ada\n")
-        # Jika opsi = 2, hapus lagu
-        elif opsi == 2:
-            if data_lagu.apakah_lagu_kosong():
-                print("Belum ada lagu untuk saat ini\n")
-            else:
-                print("Masukkan judul lagu yang ingin dihapus")
-                judul = input("> ").strip()
-                print("")
-
-                if data_lagu.hapus_lagu(judul):
-                    print(f"Lagu {judul} berhasil dihapus\n")
-                else:
-                    print(f"Lagu {judul} tidak ditemukan\n")
-        # Jika opsi = 3, edit lagu
+            self.tampilan_aktif = "Manajemen Lagu"
+            print("\nMasuk ke menu manajemen lagu")
+        # Opsi berpindah ke menu pemutar lagu
+        if opsi == 2:
+            self.tampilan_aktif = "Pemutar Lagu"
+            print("\nMasuk ke menu pemutar lagu")
+        # Opsi keluar dari program
         elif opsi == 3:
-            if data_lagu.apakah_lagu_kosong():
-                print("Belum ada lagu untuk saat ini\n")
-            else:
-                print("Masukkan judul lagu yang ingin diedit")
-                judul = input("> ").strip()
-                print("")
+            self.tampilan_aktif = "Keluar"
+            print("\nAnda keluar dari program")
+    
+    # Fungsi tampilan menu manajemen lagu
+    def menu_manajemen_lagu(self, manajemen_lagu, pemutar_lagu):
+        print("Menu Manajemen Lagu")
+        print("-------------------")
+        print("1. Tambah lagu")
+        print("2. Lihat semua lagu")
+        print("3. Lihat detail lagu")
+        print("4. Keluar")
 
-                lagu = data_lagu.dapatkan_lagu(judul)
-
-                if lagu is None:
-                    print(f"Lagu {judul} tidak ditemukan\n")
-                else:
-                    judul = dapatkan_input_dan_cek("Masukkan judul lagu (Kosongkan bila tidak ingin diubah)", "Input judul tidak sesuai, harap diulang!", r"^$|^\w[\w\s']*$")
-                    album = dapatkan_input_dan_cek("Masukkan Album lagu (Kosongkan bila tidak ingin diubah)", "Input album tidak sesuai, harap diulang!", r"^$|^\w[\w\s']*$")
-                    penyanyi = dapatkan_input_dan_cek("Masukkan penyayi lagu (Kosongkan bila tidak ingin diubah)", "Input penyanyi tidak sesuai, harap diulang!", r"^$|^\w[\w\s']*$")
-                    genre = dapatkan_input_dan_cek("Masukkan genre lagu (Kosongkan bila tidak ingin diubah)", "Input genre tidak sesuai, harap diulang!", r"^$|^\w[\w\s]*$")
-                    tahun = dapatkan_input_dan_cek("Masukkan tahun lagu [tttt] (Kosongkan bila tidak ingin diubah)", "Input tahun tidak sesuai, harap diulang!", r"^$|^[0-9]{4}$")
-                    durasi = dapatkan_input_dan_cek("Masukkan durasi lagu [mm:dd] (Kosongkan bila tidak ingin diubah)", "Input durasi tidak sesuai, harap diulang!", r"^$|^[0-9]{2}:[0-9]{2}$")
-                    print("")
-
-                    list_properti_yang_diedit = data_lagu.edit_lagu(lagu, judul, penyanyi, album, genre, tahun, durasi)
-
-                    if list_properti_yang_diedit is None:
-                        print(f"Data lagu {lagu["judul"]} tidak ada yang diubah\n")
-                    else:
-                        for properti_yang_diedit in list_properti_yang_diedit:
-                            print(f"{properti_yang_diedit["tipe"].capitalize()} lagu berhasil diubah, {properti_yang_diedit["data_sebelumnya"]} -> {properti_yang_diedit["data_baru"]}")
-                        print("")
-        # Jika opsi = 4, lihat semua lagu
-        elif opsi == 4:
-            if data_lagu.apakah_lagu_kosong():
-                print("Belum ada lagu untuk saat ini\n")
-            else:
-                print("Daftar Lagu:")
-                print("------------")
-                data_lagu.print_semua_lagu("judul")
-                print("")
-        # Jika opsi = 5, lihat detail lagu
-        elif opsi == 5:
-            if data_lagu.apakah_lagu_kosong():
-                print("Belum ada lagu untuk saat ini\n")
-            else:
-                print("Masukkan judul lagu yang ingin dilihat detailnya")
-                judul = input("> ").strip()
-                print("")
-
-                lagu = data_lagu.dapatkan_lagu(judul)
-
-                if lagu is None:
-                    print(f"Lagu {judul} tidak ditemukan\n")
-                else:
-                    print(f"Detail Lagu {judul}:")
-                    print("-------------" + '-' * len(judul))
-                    data_lagu.print_detail_lagu(lagu)
-                    print("")
-        # Jika opsi = 6, masuk mode setel lagu
-        elif opsi == 6:
-            mode_setel_lagu()
-        # Jika opsi = 6, keluar dari progrsam
-        elif opsi == 7:
-            data_lagu.keluar()
-            print("Anda keluar dari program!\n")
-            break
+        opsi = -1
+        # Kalau tidak ada lagu yang diputar, tampilkan opsi 5 dan 6
+        if pemutar_lagu.dapatkan_lagu_diputar() is None:
+            print("5. Hapus lagu")
+            print("6. Edit lagu\n")
+            opsi = dapatkan_opsi(1, 6, "Pilih opsi", "Input tidak valid", "Masukkan input yang sesuai!")
         
-        input("Tekan enter untuk melanjutkan ")
+        else:
+            opsi = dapatkan_opsi(1, 4, "\nPilih opsi", "Input tidak valid", "Masukkan input yang sesuai!")
+        # Opsi tambah lagu
+        if opsi == 1:
+            print("")
+            # Dapatkan input dari user dan cek apakah sudah sesuai
+            # Semua properti bisa dikosongkan kecuali judul
+            judul = dapatkan_input_dan_cek("Masukkan judul lagu", "Input judul tidak sesuai, harap diulang!", r"^\w[\w\s']*$").strip()
+            album = dapatkan_input_dan_cek("Masukkan Album lagu", "Input album tidak sesuai, harap diulang!", r"^$|^\w[\w\s']*$").strip()
+            penyanyi = dapatkan_input_dan_cek("Masukkan penyayi lagu", "Input penyanyi tidak sesuai, harap diulang!", r"^$|^\w[\w\s']*$").strip()
+            genre = dapatkan_input_dan_cek("Masukkan genre lagu", "Input genre tidak sesuai, harap diulang!", r"^$|^\w[\w\s/]*$").strip()
+            tahun = dapatkan_input_dan_cek("Masukkan tahun lagu [tttt]", "Input tahun tidak sesuai, harap diulang!", r"^$|^[0-9]{4}$").strip()
+            lokasi = dapatkan_input_dan_cek("Masukkan lokasi file lagu", "Input lokasi lagu tidak sesuai, harap diulang!", r"^$|^[\w\.][\w\s_\-/\.]*$").strip()
+            # Pengecekan string lokasi file
+            if len(lokasi) > 0:
+                lokasi = format_lokasi_file(lokasi.strip())
+                # Batalkan operasi jika file lagu tidak ditemukan
+                if not apakah_file_ada(lokasi):
+                    print(f"\nFile {lokasi} tidak ada")
+                    return
+            # Tambahkan lagu dan print laporan
+            manajemen_lagu.tambah(judul, album, penyanyi, genre, tahun, lokasi)
+            print(f"\nLagu '{judul}' berhasil ditambahkan")
+        # Opsi lihat semua lagu
+        elif opsi == 2:
+            # Bila lagu kosong
+            if manajemen_lagu.apakah_lagu_kosong():
+                print("\nSaat ini belum ada lagu")
+                return
+            
+            manajemen_lagu.print_semua_lagu(False)
+        # Opsi lihat detail lagu
+        elif opsi == 3:
+            # Bila lagu kosong
+            if manajemen_lagu.apakah_lagu_kosong():
+                print("\nSaat ini belum ada lagu")
+                return
+            # Dapatkan lagu yang dipilih dari input user berbentuk int index_lagu
+            manajemen_lagu.print_semua_lagu(True)
+            index_lagu = dapatkan_opsi(1, manajemen_lagu.dapatkan_total_lagu(), "\nPilih lagu yang ingin dilihat detailnya", "Input tidak valid", "Masukkan input yang sesuai!")
+            if index_lagu == -1: return
 
-# Awal program
+            lagu = manajemen_lagu.dapatkan(index_lagu - 1)
+
+            print(f"\nDetail lagu '{lagu.judul}':")
+            print("---------------" + "-" * len(lagu.judul))
+            lagu.print_detail()
+        # Opsi keluar menu
+        elif opsi == 4:
+            print("\nAnda keluar dari menu manajemen lagu")
+            self.tampilan_aktif = "Menu Awal"
+        # Opsi hapus lagu, hanya muncul jika lagutidak ada yang diputar
+        elif opsi == 5:
+            # Bila lagu kosong
+            if manajemen_lagu.apakah_lagu_kosong():
+                print("\nSaat ini belum ada lagu")
+                return
+            # Dapatkan lagu yang dipilih dari input user berbentuk int index_lagu
+            manajemen_lagu.print_semua_lagu(True)
+            index_lagu = dapatkan_opsi(1, manajemen_lagu.dapatkan_total_lagu(), "\nPilih lagu yang ingin dihapus", "Input tidak valid", "Masukkan input yang sesuai!")
+            if index_lagu == -1: return
+
+            lagu = manajemen_lagu.dapatkan(index_lagu - 1)
+            manajemen_lagu.hapus(lagu)
+
+            print(f"\nLagu '{lagu.judul}' berhasil dihapus")
+        # Opsi edit lagu, hanya muncul jika lagutidak ada yang diputar
+        elif opsi == 6:
+            # Bila lagu kosong
+            if manajemen_lagu.apakah_lagu_kosong():
+                print("\nSaat ini belum ada lagu")
+                return
+            # Dapatkan lagu yang dipilih dari input user berbentuk int index_lagu
+            manajemen_lagu.print_semua_lagu(True)
+            index_lagu = dapatkan_opsi(1, manajemen_lagu.dapatkan_total_lagu(), "\nPilih lagu yang ingin diedit", "Input tidak valid", "Masukkan input yang sesuai!")
+            if index_lagu == -1: return
+
+            print("")
+            # Dapatkan input dari user dan cek apakah sudah sesuai
+            # Input bisa dikosongkan bila tidak ingin diubah
+            judul = dapatkan_input_dan_cek("Masukkan judul lagu baru", "Input judul tidak sesuai, harap diulang!", r"^$|^\w[\w\s']*$").strip()
+            album = dapatkan_input_dan_cek("Masukkan Album lagu baru", "Input album tidak sesuai, harap diulang!", r"^$|^\w[\w\s']*$").strip()
+            penyanyi = dapatkan_input_dan_cek("Masukkan penyayi lagu baru", "Input penyanyi tidak sesuai, harap diulang!", r"^$|^\w[\w\s']*$").strip()
+            genre = dapatkan_input_dan_cek("Masukkan genre lagu baru", "Input genre tidak sesuai, harap diulang!", r"^$|^\w[\w\s/]*$").strip()
+            tahun = dapatkan_input_dan_cek("Masukkan tahun lagu baru [tttt]", "Input tahun tidak sesuai, harap diulang!", r"^$|^[0-9]{4}$").strip()
+            lokasi = dapatkan_input_dan_cek("Masukkan lokasi file lagu baru", "Input lokasi lagu tidak sesuai, harap diulang!", r"^$|^[\w\.][\w\s_\-/\.]*$").strip()
+            # Pengecekan string lokasi file
+            if len(lokasi) > 0:
+                lokasi = format_lokasi_file(lokasi)
+                # Lokasi file tidak jadi diubah jika lokasi file baru tidak ditemukan
+                if not apakah_file_ada(lokasi):
+                    print(f"\nFile {lokasi} tidak ada")
+                    lokasi = ""
+            
+            lagu = manajemen_lagu.dapatkan(index_lagu - 1)
+            list_properti = [
+                ("judul", judul), ("album", album), ("penyanyi", penyanyi),
+                ("genre", genre), ("tahun", tahun), ("lokasi", lokasi)
+            ]
+            # Panggil fungsi untuk mengedit properti
+            # Fungsi tersebut mengembalikan list data yang bertipe tuple (nama properti, nilai awal, nilai baru)
+            # Bila tidak ada properti diubah, fungsi tersebut mengembalikan list kosong
+            list_properti = manajemen_lagu.edit(lagu, list_properti)
+
+            if len(list_properti) == 0:
+                print(f"\nPropert lagu '{lagu.judul}' tidak ada yang diedit")
+                return
+            # Print properti yang diubah
+            print(f"\nList properti lagu '{lagu.judul}' yang diedit:")
+            # Unpack tuple (nama properti, nilai awal, nilai baru)
+            for (nama_properti, nilai_awal, nilai_baru) in list_properti:
+                print(f"- {nama_properti.capitalize()} lagu diedit, {nilai_awal} -> {nilai_baru}")
+    
+    # Fungsi tampilan menu pemutar lagu
+    def menu_pemutar_lagu(self, manajemen_lagu, pemutar_lagu):
+        lagu_diputar = pemutar_lagu.dapatkan_lagu_diputar()
+        sedang_dijeda = pemutar_lagu.apakah_lagu_dijeda()
+
+        print("Menu Pemutar Lagu")
+        print("-----------------")
+        print("1. Putar lagu" if lagu_diputar is None else "1. Berhenti")
+        print("2. Lihat lagu diputar")
+        print("3. Keluar")
+
+        opsi = -1
+        # Kalau ada lagu yang diputar, tamppilkan opsi 4
+        if lagu_diputar is None:
+            opsi = dapatkan_opsi(1, 3, "\nPilih opsi", "Input tidak valid", "Masukkan input yang sesuai!")
+        
+        else:
+            print("4. Mulai kembali" if sedang_dijeda else "4. Jeda")
+            opsi = dapatkan_opsi(1, 4, "\nPilih opsi", "Input tidak valid", "Masukkan input yang sesuai!")
+        # Jika lagu yang diputar selesai sebelum keluar dari fungsi,
+        # akan menimbulkan error saat pemanggilan opsi 1, 2 dan 4
+        # Keluar dari fungsi untuk mencegah error
+        if opsi != 3 and pemutar_lagu.dapatkan_lagu_diputar() is not lagu_diputar:
+            print(f"\nLagu sudah selesai diputar")
+            return
+        # Opsi putar lagu
+        if opsi == 1:
+             # Jika ada lagu yang diputar, opsi 1 adalah behenti
+            if lagu_diputar is not None:
+                print(f"\nBerhenti memutar lagu '{lagu_diputar.judul}'")
+                pemutar_lagu.berhenti()
+                return
+            # Bila lagu kosong
+            if manajemen_lagu.apakah_lagu_kosong():
+                print("\nSaat ini belum ada lagu")
+                return
+            # Dapatkan lagu dari input
+            manajemen_lagu.print_semua_lagu(True)
+            index_lagu = dapatkan_opsi(1, manajemen_lagu.dapatkan_total_lagu(), "\nPilih lagu yang ingin diputar", "Input tidak valid", "Masukkan input yang sesuai!")
+            if index_lagu == -1: return
+
+            lagu = manajemen_lagu.dapatkan(index_lagu - 1)
+            # Batalkan operasi jika lokasi file lagu belum ada
+            if lagu.lokasi == "":
+                print(f"\nLokasi file lagu '{lagu.judul}' belum ada")
+                return
+            
+            pemutar_lagu.mulai(lagu)
+            print(f"\nLagu '{lagu.judul}' diputar")
+        # Opsi print data lagu yang sedang diputar
+        elif opsi == 2:
+            # Bila tidak ada lagu yang diputar
+            if lagu_diputar is None:
+                print("\nBelum ada lagu yang diputar")
+                return
+            
+            pemutar_lagu.print_lagu_diputar()
+        # Opsi keluar dari menu
+        elif opsi == 3:
+            print("\nAnda keluar dari menu pemutar lagu")
+            self.tampilan_aktif = "Menu Awal"
+        # Opsi jeda atau mulai kembali
+        elif opsi == 4:
+            # Kalau status lagu diputar sedang dijeda, maka opsi 4 adalah mulai kembali
+            if sedang_dijeda:
+                pemutar_lagu.mulai_kembali()
+                print(f"\nLagu '{lagu_diputar.judul}' diputar kembali")
+                return
+            
+            pemutar_lagu.jeda()
+            print(f"\nLagu '{lagu_diputar.judul}' dijeda")
+    
+    # Fungsi untuk mengatur tampilan mana yang aktif
+    def tampilkan(self, manajemen_lagu, pemutar_lagu):
+        if self.tampilan_aktif == "Menu Awal":
+            self.menu_awal()
+        
+        elif self.tampilan_aktif == "Manajemen Lagu":
+            self.menu_manajemen_lagu(manajemen_lagu, pemutar_lagu)
+
+        elif self.tampilan_aktif == "Pemutar Lagu":
+            self.menu_pemutar_lagu(manajemen_lagu, pemutar_lagu)
+    
+    # Mengembalikan status program, apakah user ingin keluar dari program
+    def apakah_keluar(self):
+        return self.tampilan_aktif == "Keluar"
+
+# Awal masuk program
 if __name__ == "__main__":
-    # Inisiasi data lagu
-    data_lagu.inisiasi()
-    mode_menu_awal()
+    manajemen_tampilan = ManajemenTampilan()
+    # penyimpanan = Penyimpanan("data/data.txt")
+    penyimpanan = Penyimpanan("../sample/data/data.txt")
+    pemutar_lagu = PemutarLagu()
+    manajemen_lagu = ManajemenLagu.dari_string(penyimpanan.muat())
+    
+    while not manajemen_tampilan.apakah_keluar():
+        system("cls")
+        manajemen_tampilan.tampilkan(manajemen_lagu, pemutar_lagu)
+        input("\nTekan enter untuk melanjutkan ")
+    
+    if pemutar_lagu.dapatkan_lagu_diputar() is not None:
+        pemutar_lagu.berhenti()
+    
+    penyimpanan.simpan(manajemen_lagu.ke_string())
