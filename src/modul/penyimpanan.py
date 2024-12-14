@@ -1,8 +1,8 @@
-from modul.utilitas import apakah_file_ada, format_lokasi_file
+from modul.utilitas import apakah_file_ada, format_lokasi_absolute
 
 class Penyimpanan:
     def __init__(self, lokasi):
-        lokasi = format_lokasi_file(lokasi)
+        lokasi = format_lokasi_absolute(lokasi)
         # Cek, bila file tidak ada, buat file baru
         if not apakah_file_ada(lokasi):
             file_penyimpanan = open(lokasi, "w")
