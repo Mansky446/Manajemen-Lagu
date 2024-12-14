@@ -29,7 +29,7 @@ class PemutarLagu:
     
     # FUngsi untuk putar lagu
     def mulai(self, lagu):
-        music.load(lagu.lokasi)
+        music.load(lagu.lokasiabs)
         music.play(0, 0, 1)
         
         self.lagu_diputar = lagu
