@@ -1,7 +1,6 @@
-from os.path import isfile
 from os import sep
 from re import search
-from os.path import dirname, join
+from os.path import dirname, join, isfile
 
 # Konversi int detik ks string durasi mm:ss
 def detik_ke_string(detik):
