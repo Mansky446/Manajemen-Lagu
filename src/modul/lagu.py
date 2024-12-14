@@ -1,15 +1,25 @@
+from modul.pemutar_lagu import dapatkan_durasi_lagu
+from modul.utilitas import detik_ke_string, format_lokasi_absolute
 
 class Lagu:
-    def __init__(self, judul, album, penyanyi, genre, tahun, lokasi, durasi, diedit, ditambahkan):
+    def __init__(self, judul, album, penyanyi, genre, tahun, lokasi, diedit, ditambahkan):
         self.judul = judul
         self.album = album
         self.penyanyi = penyanyi
         self.genre = genre
         self.tahun = tahun
         self.lokasi = lokasi
-        self.durasi = durasi
         self.diedit = diedit
         self.ditambahkan = ditambahkan
+        # Jika lokasi file != "" maka update durasi lagu dan lokasiabs
+        # Durasi lagu dinamis sesuai panjang lagu dari file lagu itu sendiri
+        if lokasi == "":
+            self.lokasiabs = ""
+            self.durasi = ""
+            return
+        
+        self.lokasiabs = format_lokasi_absolute(lokasi)
+        self.durasi = detik_ke_string(dapatkan_durasi_lagu(self.lokasiabs))
     
     # Fungsi untuk mendapatkan properti lagu
     def dapatkan(self, nama_properti, nilai_sebenarnya):
@@ -20,7 +30,7 @@ class Lagu:
         # Jika properti kosong ("") maka kembalikan nilai yang berbeda tergantung nama propertinya
         return (
             "--:--" if nama_properti == "durasi" else
-            "Tidak ada" if nama_properti == "lokasi" else
+            "Tidak ada" if nama_properti == "lokasi" or nama_properti == "lokasiabs" else
             "-" if nama_properti == "tahun" or nama_properti == "genre" else
             "Tidak diketahui"
         )
@@ -39,10 +49,18 @@ class Lagu:
     # Mengubah objek lagu ke string
     def ke_string(self):
         # Mengubah object lagu ke dict dan diubah lagi menjadi list yang berisi tuple nilai properti
-        list_nilai_properti = self.__dict__.values()
+        data_lagu = self.__dict__.items()
+        data_lagu = filter(
+            lambda data: data[0] != "lokasiabs" and data[0] != "durasi",
+            data_lagu
+        )
+        data_lagu = map(
+            lambda data: data[1],
+            data_lagu
+        )
         # Membuat string dari nilai properti yang digabungkan dan disekat oleh karakter "|"
         # cth. ["judul", "album"] -> "judul|album"
-        return "|".join(list_nilai_properti)
+        return "|".join(data_lagu)
     
     # Metode statik untuk membuat objek lagu dari string
     @staticmethod
