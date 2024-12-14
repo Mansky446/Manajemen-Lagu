@@ -1,0 +1,320 @@
+
+Kami membagi program menjadi beberapa file agar kode lebih terbaca
+dan lebih mudah untuk di debug. Untuk file modul, kami masukkan kedalam
+folder modul dan file program utama ada diluar folder modul. Program dimulai
+dari file main.py yang nantinya file main.py akan meng import file-file modul
+yang dibutuhkan untuk menjalankan program. Adapun folder data yang digunakan untuk
+menyimpan data program, agar saat keluar dari program data yang sudah diproses masih
+tersimpan dan dapat dimuat kembali saat program dijalankan kembali.
+# Foto struktur file
+
+Folder data
+
+# Foto struktur folder data
+Berisi file data yang digunakan untuk menyimpan data. Defaultnya program kami akan
+memuat data dari file didalam folder ini, lebih tepatnya file "data.txt".
+
+Folder modul
+
+# Foto struktur folder modul
+Berisi file-file modul yang nantinya akan diimport oleh file program utama. Didalam
+folder ini total ada 6 file modul. File-file ini dibutuhkan agar program dapat berjalan.
+Berikut file-file beserta penjelasannya.
+
+File utilitas.py
+
+# Foto kode file utilitas.py
+Adapun modul-modul yang diimport oleh file ini, diantaranya adalah.
+- String sep dari modul bawaan python os
+- Fungsi search dari modul bawaan python re
+- Fungsi isfile, dirname dan join dari modul os.path
+
+File ini berisi fungsi-fungsi utilitas yang diperlukan agar program dapat berjalan. Berikut
+penjelasan dari fungsi-fungsi yang ada didalam file utilitas.py.
+
+Fungsi detik_ke_string
+
+# Foto fungsi
+Digunakan untuk mengubah detik ke string durasi dengan format "mm:dd".
+Cara Kerja :
+- Dapatkan menit dengan cara membagikan detik dengan 60. Operasi bagi disini menggunakan
+  "//" yang artinya pembagian akan menghasilkan int.
+- Dapatkan sisa_detik dengan cara mengurangi detik dengan 60 dikali menit.
+- Kembalikan string yang berbentuk "mm:dd". menit dan sisa_detik disini dikonversi ke string
+  dengan fungsi str, lalu ditambahkan padding n karakter "0" didepannya bila panjang string
+  kurang dari n dengan fungsi zfill.
+  Ilustrasi fungsi zfill(2) : "1" -> "01", "12" -> "12"
+
+Fungsi string_ke_detik
+
+# Foto fungsi
+Digunakan untuk mengubah string durasi "mm:dd" ke detik.
+Cara Kerja :
+- Mula-mula belah string_data di setiap ditemukannya karakter ":" dengan fungsi split.
+  Fungsi tersebut akan menghasilkan list string. Konversi list string tadi ke tuple
+  dengan fungsi tuple. Lalu lakukan operasi unpack tuple.
+  Ilustrasi fungsi split(":") : "03:22" -> ["03", "22"]
+- Operasi unpack tuple : menit akan berisi nilai tuple index ke 0 dan sisa_detik akan
+  berisi nilai tuple index ke 1.
+- Konversi menit ke int dan kalikan dengan 60, lalu ditambahkan sisa_detik yang sudah
+  dikonversi ke int. Kembalikan nilai hasil operasi tersebut.
+
+Fungsi format_lokasi_file
+
+# Foto fungsi
+Digunakan untuk mengubah karakter "/" (karakter separator file) pada string ke separator
+bawaan os
+Cara Kerja :
+- Menggunakan fungsi replace untuk mengganti bagian string. Disini karakter yang ingin
+  diganti adalah "/". Diganti ke string sep (karakter separator bawaan os) yang diimport
+  dari modul os.
+  Ilustrasi fungsi replace("/", ".") : "../data/data.txt" -> "...data.data.txt"
+
+Fungsi format_lokasi_absolute
+
+# Foto fungsi
+Digunakan untuk mengubah lokasi file yang relatif terhadap folder dimana main.py berada
+ke lokasi absolut di sistem
+Cara Kerja :
+- Dapatkan lokasi absolut folder dimana file saat ini berada dengan fungsi dirname(__file__).
+- Saat ini variable lokasi berisi lokasi folder modul. Lakukan penggabungan folder menggunakan
+  fungsi join, gabungkan variable lokasi dengan folder ".." yang nantinya akan menghasilkan
+  lokasi absolut folder dimana file main.py berada yang bertipe string.
+- Lalu gabungkan lagi dengan string_lokasi dan kembalikan.
+
+Fungsi apakah_file_ada
+Sebagai fungsi alias untuk fungsi isfile yang diimport dari modul os.path. Akan mengembalikan
+True jika file ada dan sebaliknya.
+
+Fungsi dapatkan_opsi
+
+# Foto fungsi
+Digunakan untuk mendapatkan input opsi dari user dan cek inputnya
+Cara Kerja :
+- Mula-mula print pesan dan dapatkan input dari user
+- Coba konversi string opsi ke int
+- Bila terjadi error maka akan ditangkap oleh blok except. Print pesan_input_tidak_valid
+  lalu kembalikan -1
+- Bila tidak ada error blok else akan dijalankan. Bila opsi < minimal atau opsi > maksimal
+  print pesan_input_tidak_sesuai dan kembalikan -1. Bila input sesuai kembalikan opsi
+
+Fungsi dapatkan_input_dan_cek
+
+# Foto fungsi
+Digunakan untuk mendapatkan input dari user dan cek inputnya
+Cara Kerja :
+- Masuk ke infinite while loop, print pesan dan dapatkan input dari user
+- Cek kecocokan string dengan pola regex menggunakan fungsi search. Bila string cocok
+  fungsi search akan mengembalikan objek match, jika tidak cocok fungsi akan mengembalikan None
+- Coba konversi string opsi ke int
+- Jika string cocok, keluar dari infinite loop dan lakukan operasi strip, lalu kembalikan
+  nilai input tadi. Fungsi strip digunakan untuk menghapus karakter spasi atau baris baru
+  yang berada diawal atau diakhir string.
+  Ilustrasi fungsi strip() : "  \nHello " -> "Hello"
+
+File lagu.py
+
+# Foto kode file lagu.py
+Adapun modul-modul yang diimport oleh file ini, diantaranya adalah.
+- Fungsi dapatkan_durasi_lagu dari modul modul.pemutar_lagu
+- Fungsi detik_ke_string dan format_lokasi_absolute, dari modul modul.utilitas
+
+File ini berisi kelas Lagu. Berikut penjelasan dari kelas Lagu yang ada didalam
+file lagu.py.
+
+Kelas Lagu
+# Foto kelas
+Properti :
+- judul bertipe string
+- album bertipe string
+- penyanyi bertipe string
+- genre bertipe string
+- tahun bertipe string
+- lokasi bertipe string
+- diedit bertipe string
+- ditambahkan bertipe string
+- lokasiabs bertipe string
+- durasi bertipe string
+Kegunaan : Kelas ini digunakan sebagai objek untuk menyimpan data lagu.
+Fungsi :
+
+Fungsi __init__
+
+# Foto fungsi
+Fungsi __init__ merupakan fungsi yang pertama kali dijalankan saat instansi
+dari suatu kelas dibuat. Didalam fungsi ini kita bisa menambahkan nilai ke properti
+instansi kelas.
+Cara Kerja :
+- Memasukkan nilai dari parameter ke properti.
+- Jika parameter lokasi adalah string kosong maka durasi dan lokasiabs juga kosong.
+- Jika tidak, dapatkan string durasi dengan fungsi dapatkan_durasi_lagu lalu ubah
+  ke string durasi dengan fungsi detik_ke_string.
+
+Fungsi dapatkan
+
+# Foto fungsi
+Untuk mengembalikan nilai properti suatu instansi kelas.
+Cara Kerja:
+- Dapatkan nilai properti dengan fungsi getattr.
+- Jika nilai properti kosong atau nilai_sebenarnya di set ke True maka kembalikan
+  nilai properti yang berarti mengembalikan string kosong.
+- Kembalikan nilai alias daripada string kosong. Kembalikan "--:--" jika properti yang ingin
+  didapatkan adalah durasi. Kembalikan "Tidak ada" jika lokasi atau lokasiabs. Kembalikan
+  "-" jika tahun atau genre. Kembalikan "Tidak diketahui" untuk properti lainnya.
+
+Fungsi print_detail
+
+# Foto fungsi
+Digunakan untuk print semua properti suatu instansi kelas.
+Cara Kerja:
+- Variable data_lagu berisi objek items yang terbuat dari konversi properti objek ke dict.
+  Objek items berbentuk seperti list yang berisikan tuple 2 elemen. Elemen 0 adalah nama
+  properti dan elemen 1 adalah nilai properti.
+- Lakukan loop terhadap variable tersebut dengan for loop.
+- Unpack elemen yang bertipe tuple lalu print.
+
+Fungsi ke_string
+
+# Fungsi fungsi
+Digunakan utuk konversi instansi kelas ke string yang nantinya akan digunakan untuk menulis
+data ke file penyimpaan.
+Cara Kerja:
+- Variable data_lagu berisi objek items.
+- Filter isi dari objek items dengan fungsi filter. Filter objek agar objek hanya berisi
+  data-data yang ingin disimpan. Data lokasiabs dan durasi adalah data yang diamis sesuai
+  dega data propert lokasi, jadi data tersebut tidak perlu disimpan.
+- Lalu ubah variable dari tipe list berisikan tuple 2 elemen menjadi list yang berisikan
+  nilai properti dengan fungsi map.
+- Gabungkan list tadi menjadi string yang per elemennya disekat oleh karakter "|" dengan
+  fungsi join. Lalu kembalikan nilainya.
+  Ilustrasi fungsi "-".join() : ["Ramm", "stein"] -> "Ramm-stein"
+
+Fungsi Statis dari_string
+
+# Foto fungsi
+Membuat instansi baru kelas Lagu yang terbuat dari string data
+Cara Kerja:
+- Belah string dengan fungsi split
+- Buat instansi kelas dengan syntax Lagu(parameter). Untuk parameter nya sendiri merupakan
+  elemen-elemen list.
+  Ilustrasi syntax : Lagu(*list) -> Lagu(list[0], list[1], ...)
+
+File penyimpanan.py
+
+# Foto kode file
+Adapun modul-modul yang diimport oleh file ini, diantaranya adalah.
+- Fungsi apakah_file_ada dan format_lokasi_absolute dari modul modul.utilitas
+
+File ini berisi kelas Penyimpanan. Berikut penjelasan dari kelas Penyimpanan yang ada
+didalam file penyimpaan.py.
+
+Kelas Penyimpanan
+# Foto kelas
+Properti :
+- lokasi_file bertipe string
+Kegunaan : Kelas ini digunakan sebagai objek untuk menyimpan data ke file.
+Fungsi :
+
+Fungsi __init__
+
+# Foto fungsi
+Fungsi ini melakukan inisiasi file penyimpanan. Bila file tidak ada maka, buat file dan
+tulis string kosong ke file
+
+Fungsi simpan
+
+# Foto fungsi
+Digunakan untuk menulis data yang bertipe string ke file penyimpaan dengan fungsi write.
+Sebelum melakukan operasi tulis file, buka file terlebih dahulu dengan fungsi open, masukkan
+mode yang sesuai, "w" untuk tulis. Setelah file ditulis, tutup file nya dengan fungsi close
+
+Fungsi muat
+
+# Foto fungsi
+Digunakan untuk muat data yang bertipe string dari file penyimpaan dengan fungsi read.
+Sebelum melakukan operasi baca file, buka file terlebih dahulu dengan fungsi open, masukkan
+mode yang sesuai, "r" untuk baca. Setelah file dibaca, tutup file nya dengan fungsi close,
+lalu kembalikan data yang sudah dibaca tadi
+
+File pemutar_lagu.py
+
+# Foto kode file
+Adapun modul-modul yang diimport oleh file ini, diantaranya adalah.
+- Objek environ dari modul os
+- Fungsi ceil dari modul math
+- Objek Timer dari modul threading
+- Fungsi string_ke_detik dari modul modul.utilitas
+
+File ini hanya memiliki satu fungsi yaitu:
+
+Fungsi dapatkan_durasi_lagu
+
+# Foto fungsi
+Mendapatkan durasi lagu dari lokasi file yang diberikan.
+Cara Kerja:
+- Untuk mendapatkan panjang durasi kita bisa menggunakan fungsi get_length pada objek Sound.
+  Buat objek Sound lalu dapatkan durasi dengan fungsi get_length.
+- Bulatkan keatas detik yang didapatkan dari fungsi tersebut (sebelumnya berbentuk double) dengan fungsi ceil.
+  Dan kembalikan nilainya.
+
+File ini juga berisi kelas PemutarLagu. Berikut penjelasan dari kelas PemutarLagu yang ada
+didalam file pemutar_lagu.py.
+
+Kelas PemutarLagu
+# Foto kelas
+Properti :
+- lagu_diputar bertipe None atau objek Lagu
+- sedang_dijeda bertipe bool
+- pengingat bertipe None atau objek Timer
+Kegunaan : Kelas ini digunakan sebagai objek untuk memutar lagu.
+Fungsi :
+
+Fungsi __init__
+
+#Foto fungsi
+Inisiasi nilai properti objek ke nilai awal
+
+Fungsi dapatkan_lagu_diputar
+
+#Foto fungsi
+Fungsi untuk mendapatkan lagu yang sedang diputar saat ini
+
+Fungsi apakah_lagu_dijeda
+
+#Foto fungsi
+Untuk mendapatkan status apakah file sedang dijeda atau tidak
+
+Fungsi mulai
+
+#Foto fungsi
+Digunakan untuk memutar lagu.
+Cara Kerja:
+- Mula-mula muat lagu dengan fungsi load. Lalu panggil fungsi play untuk memutar lagu.
+- Update properti objek.
+- Buat timer dengan delai nya adalah durasi lagu yang sedang diputar, dan fungsi yang akan dipanggil saat 
+  delai sudah habis adalah fungsi berhenti. Pengingat ini digunakan agar saat lagu sudah selesai diputar,
+  mengupdate status-status yang dibutuhkan.
+
+Fungsi berhenti
+
+#Foto fungsi
+Digunakan untuk berhenti memutar lagu.
+Cara Kerja:
+- Berhenti memutar lagu dengan fungsi stop, lalu lepas file dari objekk music dengan fungsi unload.
+- Update status yang dibutuhkan.
+- Batalkan objek Timer yang dibuat saat fungsi mulai dipanggil
+
+Fungsi jeda
+
+#Foto fungsi
+Digunakan untuk menjeda yang diputar
+
+Fungsi mulai_kembali
+
+#Foto fungsi
+Digunakan untuk memulai kembali lagu yang sedang dijeda
+
+Fungsi print_lagu_diputar
+
+#Foto fungsi
+Digunakan untuk print detail lagu yang sedang diputar saat ini
