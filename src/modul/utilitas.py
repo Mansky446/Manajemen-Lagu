@@ -1,6 +1,7 @@
-from os.path import exists
+from os.path import isfile
 from os import sep
 from re import search
+from os.path import dirname, join
 
 # Konversi int detik ks string durasi mm:ss
 def detik_ke_string(detik):
@@ -23,9 +24,14 @@ def string_ke_detik(string_data):
 def format_lokasi_file(string_lokasi):
     return string_lokasi.replace("/", sep)
 
-# Mengecek apakah file di lokasi string_lokasi ada atau tidak menggunakan fungsi exists
+# Mengubah lokasi dari lokasi yang relatif ke main.py -> lokasi absolut
+def format_lokasi_absolute(string_lokasi):
+    lokasi = join(dirname(__file__), "..")
+    return join(lokasi, format_lokasi_file(string_lokasi))
+
+# Mengecek apakah file di lokasi string_lokasi ada atau tidak menggunakan fungsi isfile
 def apakah_file_ada(string_lokasi):
-    return exists(string_lokasi)
+    return isfile(string_lokasi)
 
 # Dapatkan input pilihan atau opsi dari user berbentuk int
 def dapatkan_opsi(minimal, maksimal, pesan, pesan_input_tidak_valid, pesan_input_tidak_sesuai):
