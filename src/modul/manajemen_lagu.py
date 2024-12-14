@@ -1,5 +1,5 @@
 from datetime import datetime
-from modul.utilitas import detik_ke_string
+from modul.utilitas import detik_ke_string, format_lokasi_absolute
 from modul.pemutar_lagu import dapatkan_durasi_lagu
 from modul.lagu import Lagu
 
@@ -17,15 +17,12 @@ class ManajemenLagu:
     
     # Fungsi untuk menambah objek lagu baru ke list_lagu
     def tambah(self, judul, album, penyanyi, genre, tahun, lokasi):
-        # Jika user menambahkan lokasi file (lokasi != "") maka update durasi lagu
-        # Durasi lagu dinamis sesuai panjang lagu dari file lagu itu sendiri
-        durasi = detik_ke_string(dapatkan_durasi_lagu(lokasi)) if lokasi != "" else ""
         # Mendapatkan waktu saat ini dengan format datetime lalu konversi ke string dengan fungsi strftime
         waktu_saat_ini = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
         # Buat objek lagu dan tambahkan ke list_lagu
         self.list_lagu.append(Lagu(
             judul, album, penyanyi, genre, tahun,
-            lokasi, durasi, waktu_saat_ini, waktu_saat_ini
+            lokasi, waktu_saat_ini, waktu_saat_ini
         ))
     
     # Fungsi untuk menghapus objek lagu dari list_lagu
@@ -53,9 +50,17 @@ class ManajemenLagu:
             ))
             # Ubah properti objek lagu
             setattr(lagu, nama_properti, nilai_properti)
-            # Kalau lokasi file berubah, tandanya file lagu nya juga berubah, durasi nya pun juga berubah
+            # Kalau lokasi file berubah, tandanya file lagu nya juga berubah, durasi dan lokasiabs nya pun juga berubah
             if nama_properti == "lokasi":
-                durasi = detik_ke_string(dapatkan_durasi_lagu(nilai_properti))
+                lokasiabs = format_lokasi_absolute(nilai_properti)
+                list_properti_diedit.append((
+                    "lokasiabs",
+                    lagu.dapatkan("lokasiabs", False),
+                    lokasiabs
+                ))
+                setattr(lagu, "lokasiabs", lokasiabs)
+
+                durasi = detik_ke_string(dapatkan_durasi_lagu(lokasiabs))
                 list_properti_diedit.append((
                     "durasi",
                     lagu.dapatkan("durasi", False),
