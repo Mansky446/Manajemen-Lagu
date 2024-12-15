@@ -443,3 +443,12 @@ Fungsi apakah_keluar
 
 Digunakan untuk mengecek apakah tampilan tidak ada tampilan yang aktif, yang
 berarti keluar dari program
+
+Penjelasan File Awal main.py
+
+Program awal kami dimulai dari file main.py. Didalam file ini, mengimport semua
+class yang sudah kami buat di file-file modul yang berada didalam folder modul.
+File ini berisi while loop yang akan terus berjalan sampai status tampilah adalah
+"Keluar". Didalam file ini juga ditentukan dimana program memuat data lagu.
+Didalam file ini juga mengimport fungsi system dari modul os untuk membersihkan
+tampilan konsol.
