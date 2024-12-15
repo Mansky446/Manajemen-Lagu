@@ -238,7 +238,6 @@ lalu kembalikan data yang sudah dibaca tadi
 
 File pemutar_lagu.py
 
-# Foto kode file
 Adapun modul-modul yang diimport oleh file ini, diantaranya adalah.
 - Objek environ dari modul os
 - Fungsi ceil dari modul math
@@ -249,7 +248,6 @@ File ini hanya memiliki satu fungsi yaitu:
 
 Fungsi dapatkan_durasi_lagu
 
-# Foto fungsi
 Mendapatkan durasi lagu dari lokasi file yang diberikan.
 Cara Kerja:
 - Untuk mendapatkan panjang durasi kita bisa menggunakan fungsi get_length pada objek Sound.
@@ -257,36 +255,30 @@ Cara Kerja:
 - Bulatkan keatas detik yang didapatkan dari fungsi tersebut (sebelumnya berbentuk double) dengan fungsi ceil.
   Dan kembalikan nilainya.
 
-File ini juga berisi kelas PemutarLagu. Berikut penjelasan dari kelas PemutarLagu yang ada
-didalam file pemutar_lagu.py.
+File ini juga berisi kelas PemutarLagu.
 
 Kelas PemutarLagu
-# Foto kelas
 Properti :
 - lagu_diputar bertipe None atau objek Lagu
 - sedang_dijeda bertipe bool
 - pengingat bertipe None atau objek Timer
-Kegunaan : Kelas ini digunakan sebagai objek untuk memutar lagu.
+Kegunaan : Kelas ini digunakan sebagai objek untuk melakukan operasi pemutaran lagu.
 Fungsi :
 
-Fungsi __init__
+Fungsi _init_
 
-#Foto fungsi
 Inisiasi nilai properti objek ke nilai awal
 
 Fungsi dapatkan_lagu_diputar
 
-#Foto fungsi
 Fungsi untuk mendapatkan lagu yang sedang diputar saat ini
 
 Fungsi apakah_lagu_dijeda
 
-#Foto fungsi
 Untuk mendapatkan status apakah file sedang dijeda atau tidak
 
 Fungsi mulai
 
-#Foto fungsi
 Digunakan untuk memutar lagu.
 Cara Kerja:
 - Mula-mula muat lagu dengan fungsi load. Lalu panggil fungsi play untuk memutar lagu.
@@ -297,24 +289,157 @@ Cara Kerja:
 
 Fungsi berhenti
 
-#Foto fungsi
 Digunakan untuk berhenti memutar lagu.
 Cara Kerja:
-- Berhenti memutar lagu dengan fungsi stop, lalu lepas file dari objekk music dengan fungsi unload.
+- Berhenti memutar lagu dengan fungsi stop, lalu lepas file dari objek music dengan fungsi unload.
 - Update status yang dibutuhkan.
 - Batalkan objek Timer yang dibuat saat fungsi mulai dipanggil
 
 Fungsi jeda
 
-#Foto fungsi
-Digunakan untuk menjeda yang diputar
+Digunakan untuk menjeda yang diputar dengan fungsi pause.
 
 Fungsi mulai_kembali
 
-#Foto fungsi
-Digunakan untuk memulai kembali lagu yang sedang dijeda
+Digunakan untuk memulai kembali lagu yang sedang dijeda dengan fungsi unpause.
 
 Fungsi print_lagu_diputar
 
-#Foto fungsi
 Digunakan untuk print detail lagu yang sedang diputar saat ini
+
+File manajemen_lagu.py
+
+# Foto kode file
+Adapun modul-modul yang diimport oleh file ini, diantaranya adalah.
+- Objek datetime dari modul datetime
+- Fungsi detik_ke_string, format_lokasi_absolute dari modul modul.utilitas
+- FUngsi dapatkan_durasi_lagu dari modul.pemutar_lagu
+- Class Lagu dari modul.lagu
+
+File ini berisi kelas ManajemenLagu.
+
+Kelas ManajemenLagu
+Properti :
+- list_file bertipe list objek kelas Lagu
+Kegunaan : Kelas ini digunakan sebagai objek untuk manajemen data lagu.
+Fungsi :
+
+Fungsi _init_
+
+Inisiasi nilai properti objek ke nilai awal.
+
+Fungsi apakah_lagu_kosong
+
+Digunakan untuk mengecek apakah lagu kosong. Dengan cara membandingkan
+panjang list_lagu dengan 0.
+
+Fungsi dapatkan_total_lagu
+
+Digunakan untuk memdapatkan total lagu.
+
+Fungsi tambah
+
+Digunakan untuk menambahkan lagu ke dalam list list_lagu
+Cara Kerja:
+- Pertama, dapatkan waktu saat ini dengan fungsi now pada objek datetim.
+  Fungsi tersebut menghasilkan objek datetime. Lalu ubah objek tersebut ke string
+  dengan fungsi strftime
+- Buat objek Lagu, lalu masukkan objek tersebut ke list_lagu dengan fungsi append
+
+Fungsi hapus
+
+Digunakan untuk menghapus objek Lagu dari list_lagu dengan fungsi remove
+
+Fungsi dapatkan
+
+Digunakan untuk mendapatkan lagu berdasarkan index yang diberikan lewat
+parameter fungsi
+
+Fungsi edit
+
+Digunakan untuk memodifikasi properti objek Lagu
+Cara Kerja:
+- Buat list kosong untuk menyimpa data properti apa saja yang diedit
+- Lakukan perulangan terhadap list parameter yang bernama list_properti.
+  Dan lakukan unpack terhadap elemen listyang bertipe tuple
+- Jika elemen kedua dari tuple adalah string kosong berarti properti tersebut
+  tidak diubah.
+- Modifikasi attibut lagu dengan fungsi setattr
+- Jika properti yang dimodifikasi adalah lokasi maka update juga properti durasi
+  dan lokasiabs
+- Cek, jika list properti yang diedit bukan list kosong, maka ada properti yang
+  diubah. Ubah attribut diedit lagu
+- Kembalikan list properti diedit
+
+Fungsi ke_string
+
+Digunakan untuk mengubah data list_lagu ke string yang bisa ditulis ke file
+Cara Kerja:
+- Jika list_lagu kosong, kembalikan string kosong
+- Lakukan modfikasi elemen list dengan fungsi map yang tadinya bertipe objek
+  Lagu diubah ke string dengan fungsi ke_string dari objek lagu. Lalu
+  kembalikan string yang sudah di proses tadi
+
+Fungsi fungsi_semua_lagu
+
+Digunakan untuk print semua lagu
+Cara Kerja:
+- Lakukan perulangan terhadap objek enumerate yang dibuat dari list_lagu.
+  Lalu lakukan unpack pada setiap elemennya.
+- Jika print singkat adalah true maka print judul dan penyanyi lagu.
+- Jika tidak, maka print yang lebih lengkap.
+
+Fungsi Statis dari_string
+
+Digunakan untuk mengubah string data ke objek ManajemenLagu yang berisi objek Lagu
+Cara Kerja:
+- Dapatkan dulu nilai list_lagu nya dengan cara membelah string data dengan
+  fungsi split. Lalu modifikasi elemen dengan fungsi map
+- Buat objek ManajemenLagu dengan list lagu yang tadi sudah dibuat sebagai
+  parameter nya.
+
+File manajemen_tampilan.py
+
+# Foto kode file
+Adapun modul-modul yang diimport oleh file ini, diantaranya adalah.
+- Fungsi dapatkan_opsi, dapatkan_input_dan_cek,
+  apakah_file_ada, format_lokasi_file,
+  format_lokasi_absolute dari modul modul.utilitas
+
+File ini berisi kelas ManajemenTampilan. Berikut penjelasan dari kelas ManajemenTampilan
+yang ada didalam file manajemen_tampilan.py.
+
+Kelas ManajemenTampilan
+# Foto kelas
+Properti :
+- tampilan_aktif bertipe string
+- manajemen_lagu bertipe objek ManajemenLagu
+- pemutar_lagu bertipe objek PemutarLagu
+Kegunaan : Kelas ini digunakan sebagai objek untuk manajemen tampilan konsol.
+Fungsi :
+
+Fungsi _init_
+
+Inisiasi nilai properti objek ke nilai awal.
+
+Fungsi menu_awal
+
+Digunakan untuk menampilkan tampilan menu awal
+
+Fungsi menu_manajemen_lagu
+
+Digunakan untuk menampilkan tampilan menu manajemen lagu
+
+Fungsi menu_pemutar_lagu
+
+Digunakan untuk menampilkan tampilan menu pemutar lagu
+
+Fungsi tampilkan
+
+Digunakan untuk menampilkan tanmpilan yang sedang aktif berdasarkan properti
+tampilan_aktif
+
+Fungsi apakah_keluar
+
+Digunakan untuk mengecek apakah tampilan tidak ada tampilan yang aktif, yang
+berarti keluar dari program
